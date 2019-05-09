@@ -17,7 +17,8 @@
     "dist": "build --x64 --ia32",
     "test": "mocha test",
     "tdd": "mocha --watch test",
-    "lint": "./node_modules/.bin/standard"
+	"lint": "./node_modules/.bin/standard",
+	"open": "open dist/mac/stretchly.app"
   },
   "repository": {
     "type": "git",
