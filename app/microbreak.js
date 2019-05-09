@@ -31,10 +31,10 @@ ipcRenderer.on('progress', (event, started, duration, strictMode, postpone, post
   window.setInterval(function () {
     if (Date.now() - started < duration) {
       const passedPercent = (Date.now() - started) / duration * 100
-      postponeElement.style.visibility =
-        Utils.canPostpone(postpone, passedPercent, postponePercent) ? 'visible' : 'hidden'
-      closeElement.style.visibility =
-        Utils.canSkip(strictMode, postpone, passedPercent, postponePercent) ? 'visible' : 'hidden'
+      postponeElement.style.visibility = 'visible'
+        // Utils.canPostpone(postpone, passedPercent, postponePercent) ? 'visible' : 'hidden'
+      closeElement.style.visibility = 'visible'
+        // Utils.canSkip(strictMode, postpone, passedPercent, postponePercent) ? 'visible' : 'hidden'
       progress.value = passedPercent * progress.max / 100
       progressTime.innerHTML = Utils.formatRemaining(Math.trunc((duration - Date.now() + started) / 1000))
     }

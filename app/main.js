@@ -34,18 +34,20 @@ global.shared = {
   isNewVersion: false
 }
 
-const shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {})
+// const shouldQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {})
 
-if (shouldQuit) {
-  console.log('stretchly is already running.')
-  app.quit()
-  return
-}
+// if (shouldQuit) {
+//   console.log('stretchly is already running.')
+//   app.quit()
+//   return
+// }
 
 app.on('ready', startProcessWin)
 app.on('ready', loadSettings)
 app.on('ready', createTrayIcon)
 app.on('ready', startPowerMonitoring)
+// app.on('ready', () => { breakPlanner.skipToMicrobreak() })
+// app.on('ready', () => { breakPlanner.skipToBreak() })
 app.on('window-all-closed', () => {
   // do nothing, so app wont get closed
 })
@@ -113,7 +115,7 @@ function closeWindows (windowArray) {
   }
 }
 
-function displaysX (displayID = -1, width = 800) {
+function displaysBounds (displayID = -1) {
   const electron = require('electron')
   let theScreen
   if (displayID === -1) {
@@ -126,24 +128,16 @@ function displaysX (displayID = -1, width = 800) {
     const screens = electron.screen.getAllDisplays()
     theScreen = screens[displayID]
   }
-  const bounds = theScreen.bounds
+  return theScreen.bounds
+}
+
+function displaysX (displayID = -1, width = 800) {
+  const bounds = displaysBounds(displayID)
   return Math.ceil(bounds.x + ((bounds.width - width) / 2))
 }
 
 function displaysY (displayID = -1, height = 600) {
-  const electron = require('electron')
-  let theScreen
-  if (displayID === -1) {
-    theScreen = electron.screen.getDisplayNearestPoint(electron.screen.getCursorScreenPoint())
-  } else if (displayID >= numberOfDisplays()) {
-    // Graceful handling of invalid displayID
-    console.log('warning: invalid displayID to displaysY')
-    theScreen = electron.screen.getDisplayNearestPoint(electron.screen.getCursorScreenPoint())
-  } else {
-    const screens = electron.screen.getAllDisplays()
-    theScreen = screens[displayID]
-  }
-  const bounds = theScreen.bounds
+  const bounds = displaysBounds(displayID)
   return Math.ceil(bounds.y + ((bounds.height - height) / 2))
 }
 
@@ -322,7 +316,14 @@ function startMicrobreak () {
     if  (!(settings.get('fullscreen') && process.platform === 'win32')) {
       windowOptions.x = displaysX(displayIdx)
       windowOptions.y = displaysY(displayIdx)
-    }
+	}
+	
+	// fill screens
+	const bounds = displaysBounds(displayIdx)
+	windowOptions.x = displaysX(displayIdx, bounds.width)
+	windowOptions.y = displaysY(displayIdx, bounds.height)
+	windowOptions.width = bounds.width
+	windowOptions.height = bounds.height
 
     const microbreakWinLocal = new BrowserWindow(windowOptions)
     // microbreakWinLocal.webContents.openDevTools()
@@ -402,7 +403,14 @@ function startBreak () {
     if  (!(settings.get('fullscreen') && process.platform === 'win32')) {
       windowOptions.x = displaysX(displayIdx)
       windowOptions.y = displaysY(displayIdx)
-    }
+	}
+	
+	// fill screens
+	const bounds = displaysBounds(displayIdx)
+	windowOptions.x = displaysX(displayIdx, bounds.width)
+	windowOptions.y = displaysY(displayIdx, bounds.height)
+	windowOptions.width = bounds.width
+	windowOptions.height = bounds.height
 
     const breakWinLocal = new BrowserWindow(windowOptions)
     // breakWinLocal.webContents.openDevTools()
@@ -585,14 +593,14 @@ function getTrayMenu () {
   const nextBreak = Utils.formatTimeOfNextBreak(timeLeft)
   const doNotDisturb = breakPlanner.dndManager.isOnDnd
 
-  if (global.shared.isNewVersion) {
-    trayMenu.push({
-      label: i18next.t('main.downloadLatestVersion'),
-      click: function () {
-        shell.openExternal('https://github.com/hovancik/stretchly/releases')
-      }
-    })
-  }
+//   if (global.shared.isNewVersion) {
+//     trayMenu.push({
+//       label: i18next.t('main.downloadLatestVersion'),
+//       click: function () {
+//         shell.openExternal('https://github.com/hovancik/stretchly/releases')
+//       }
+//     })
+//   }
 
   if (timeLeft) {
     if (isPaused) {
@@ -612,26 +620,29 @@ function getTrayMenu () {
     })
   }
 
-  trayMenu.push({
-    type: 'separator'
-  }, {
-    label: i18next.t('main.about'),
-    click: function () {
-      showAboutWindow()
-    }
-  }, {
-    label: i18next.t('main.becomePatron'),
-    click: function () {
-      shell.openExternal('https://www.patreon.com/hovancik')
-    }
-  }, {
-    type: 'separator'
-  })
+//   trayMenu.push({
+//     type: 'separator'
+//   }, {
+//     label: i18next.t('main.about'),
+//     click: function () {
+//       showAboutWindow()
+//     }
+//   }, {
+//     label: i18next.t('main.becomePatron'),
+//     click: function () {
+//       shell.openExternal('https://www.patreon.com/hovancik')
+//     }
+//   }, {
+//     type: 'separator'
+//   })
 
   if (!(breakPlanner.isPaused || breakPlanner.dndManager.isOnDnd)) {
-    let submenu = []
+    // let submenu = []
     if (settings.get('microbreak')) {
-      submenu = submenu.concat([{
+    //   submenu = submenu.concat([{
+	  trayMenu.push({
+	    type: 'separator'
+	  },{
         label: i18next.t('main.toMicrobreak'),
         click: function () {
           if (microbreakWins) {
@@ -646,10 +657,12 @@ function getTrayMenu () {
           appIcon.setContextMenu(getTrayMenu())
           updateToolTip()
         }
-      }])
+      })
+    //   }])
     }
     if (settings.get('break')) {
-      submenu = submenu.concat([{
+    //   submenu = submenu.concat([{
+	  trayMenu.push({
         label: i18next.t('main.toBreak'),
         click: function () {
           if (microbreakWins) {
@@ -664,14 +677,17 @@ function getTrayMenu () {
           appIcon.setContextMenu(getTrayMenu())
           updateToolTip()
         }
-      }])
+      }, {
+	    type: 'separator'
+	  })
+    //   }])
     }
-    if (settings.get('break') || settings.get('microbreak')) {
-      trayMenu.push({
-        label: i18next.t('main.skipToTheNext'),
-        submenu: submenu
-      })
-    }
+    // if (settings.get('break') || settings.get('microbreak')) {
+    //   trayMenu.push({
+    //     label: i18next.t('main.skipToTheNext'),
+    //     submenu: submenu
+    //   })
+    // }
   }
 
   if (breakPlanner.isPaused) {
@@ -755,30 +771,32 @@ function getTrayMenu () {
 
   trayMenu.push({
     type: 'separator'
-  }, {
-    label: i18next.t('main.yourStretchly'),
-    click: function () {
-      const myStretchlyUrl = 'https://my.stretchly.net'
-      const myStretchlyWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        icon: `${__dirname}/images/stretchly_18x18.png`,
-        x: displaysX(),
-        y: displaysY(),
-        resizable: false,
-        backgroundColor: settings.get('mainColor'),
-        webPreferences: {
-          preload: path.resolve(__dirname,'./electron-bridge.js'),
-          nodeIntegration: false
-        }
-      })
-      myStretchlyWindow.loadURL(myStretchlyUrl)
-      // myStretchlyWindow.webContents.openDevTools()
-      // myStretchlyWindow.webContents.session.clearCache(()=> {})
-    }
-  }, {
-    type: 'separator'
-  }, {
+  }
+//   ,{
+//     label: i18next.t('main.yourStretchly'),
+//     click: function () {
+//       const myStretchlyUrl = 'https://my.stretchly.net'
+//       const myStretchlyWindow = new BrowserWindow({
+//         width: 800,
+//         height: 600,
+//         icon: `${__dirname}/images/stretchly_18x18.png`,
+//         x: displaysX(),
+//         y: displaysY(),
+//         resizable: false,
+//         backgroundColor: settings.get('mainColor'),
+//         webPreferences: {
+//           preload: path.resolve(__dirname,'./electron-bridge.js'),
+//           nodeIntegration: false
+//         }
+//       })
+//       myStretchlyWindow.loadURL(myStretchlyUrl)
+//       // myStretchlyWindow.webContents.openDevTools()
+//       // myStretchlyWindow.webContents.session.clearCache(()=> {})
+//     }
+//   }, {
+//     type: 'separator'
+//   } 
+  ,{
     label: i18next.t('main.quitStretchly'),
     click: function () {
       app.quit()

@@ -13,7 +13,7 @@
     "about": "About",
     "becomePatron": "Become a Patron",
     "notificationStateMode": "On Do Not Disturb mode",
-    "toBreak": "break",
+    "toBreak": "break now",
     "toMicrobreak": "microbreak",
     "skipToTheNext": "Skip to the next",
     "resume": "Resume",
@@ -42,13 +42,13 @@
     "notificationStatus": "\nIn Do Not Disturb mode"
   },
   "break": {
-    "postpone": "…wait for a bit",
-    "keepGoing": "…nah, I'll just keep going on",
+    "postpone": "Postpone",
+    "keepGoing": "Skip",
     "title": "Time to take a break!"
   },
   "microbreak": {
-    "postpone": "…wait for a bit",
-    "keepGoing": "…nah, I'll just keep going on",
+    "postpone": "Postpone",
+    "keepGoing": "Skip",
     "title": "Time to take a break!"
   },
   "about": {
