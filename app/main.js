@@ -310,7 +310,7 @@ function startMicrobreak () {
       backgroundColor: settings.get('mainColor'),
       skipTaskbar: true,
       focusable: false,
-      title: 'stretchly'
+	  title: 'stretchly',
     }
 
     if  (!(settings.get('fullscreen') && process.platform === 'win32')) {
@@ -328,7 +328,7 @@ function startMicrobreak () {
     const microbreakWinLocal = new BrowserWindow(windowOptions)
     // microbreakWinLocal.webContents.openDevTools()
     microbreakWinLocal.once('ready-to-show', () => {
-      microbreakWinLocal.show()
+      microbreakWinLocal.showInactive()
       microbreakWinLocal.setKiosk(settings.get('fullscreen'))
       if (displayIdx === 0) {
         breakPlanner.emit('microbreakStarted', true)
@@ -415,7 +415,7 @@ function startBreak () {
     const breakWinLocal = new BrowserWindow(windowOptions)
     // breakWinLocal.webContents.openDevTools()
     breakWinLocal.once('ready-to-show', () => {
-      breakWinLocal.show()
+      breakWinLocal.showInactive()
       breakWinLocal.setKiosk(settings.get('fullscreen'))
       if (displayIdx === 0) {
         breakPlanner.emit('breakStarted', true)
