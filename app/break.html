@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title data-i18next="microbreak.title"></title>
-    <link rel="stylesheet" type="text/css" href="css/app.css">
-  </head>
-  <body>
-    <div class="microbreak">
-	  <div class="break-title" data-i18next="break.title"></div>
-      <div class="break-idea"></div>
-      <div class="break-text"></div>
-      <progress id='progress' max="10000" ></progress><br/>
-	  <p id='progress-time'></p>
+<head>
+	<meta charset="UTF-8">
+	<title data-i18next="microbreak.title"></title>
+	<link rel="stylesheet" type="text/css" href="css/app.css">
+</head>
+<body class="break-window">
+	<div class="microbreak">
+		<div class="break-content">
+			<div class="break-title" data-i18next="break.title"></div>
+			<div class="break-idea"></div>
+			<div class="break-text"></div>
+			<progress id='progress' max="10000" ></progress><br/>
+			<p id='progress-time'></p>
+		</div>
 	</div>
 	<div id="break-controls">
-	  <a id="postpone" title="Ctrl/Cmd + x" data-i18next="break.postpone"></a>
-	  &nbsp; &middot; &nbsp;
-	  <a id="close" title="Ctrl/Cmd + x" data-i18next="break.keepGoing"></a>
+		<a id="postpone" title="Ctrl/Cmd + x" data-i18next="break.postpone"></a>
+		&nbsp; &middot; &nbsp;
+		<a id="close" title="Ctrl/Cmd + x" data-i18next="break.keepGoing"></a>
 	</div>
-    <script>
-      require('./platform.js')
-      require('./break.js')
-    </script>
-  </body>
+	<div id="bgColor"></div>
+	<script>
+		require('./platform.js')
+		require('./break.js')
+	</script>
+</body>
 </html>
