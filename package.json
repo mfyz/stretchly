@@ -1,6 +1,6 @@
 {
   "name": "stretchly",
-  "version": "0.19.1",
+  "version": "0.2.1",
   "description": "break time reminder app",
   "main": "app/main.js",
   "engines": {
@@ -17,12 +17,12 @@
     "dist": "build --x64 --ia32",
     "test": "mocha test",
     "tdd": "mocha --watch test",
-	"lint": "./node_modules/.bin/standard",
-	"open": "open dist/mac/stretchly.app"
+    "lint": "./node_modules/.bin/standard",
+    "open": "open dist/mac/stretchly.app"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hovancik/stretchly.git"
+    "url": "git+https://github.com/mfyz/stretchly.git"
   },
   "keywords": [
     "stretchly",
@@ -33,9 +33,9 @@
   "author": "Jan Hovancik <conta.srdr@gmail.com>",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/hovancik/stretchly/issues"
+    "url": "https://github.com/mfyz/stretchly/issues"
   },
-  "homepage": "https://hovancik.net/stretchly",
+  "homepage": "https://github.com/mfyz/stretchly",
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
@@ -49,7 +49,7 @@
     "standard": "^12.0.1"
   },
   "build": {
-    "appId": "net.hovancik.stretchly",
+    "appId": "com.mfyz.stretchly",
     "productName": "stretchly",
     "dmg": {
       "icon": "build/icon.icns",
@@ -128,6 +128,7 @@
   "dependencies": {
     "@meetfranz/electron-notification-state": "^1.0.0",
     "@paulcbetts/system-idle-time": "^1.0.5",
+    "child_process": "^1.0.2",
     "i18next": "^15.0.4",
     "i18next-node-fs-backend": "^2.1.1",
     "moment": "^2.24.0"

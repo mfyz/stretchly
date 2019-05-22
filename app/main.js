@@ -3,6 +3,7 @@ const { app, BrowserWindow, Tray, Menu, ipcMain, shell, dialog, globalShortcut }
 const path = require('path')
 const i18next = require('i18next')
 const Backend = require('i18next-node-fs-backend')
+const exec = require('child_process').exec;
 
 startI18next()
 
@@ -27,6 +28,7 @@ let welcomeWin = null
 let contributorSettingsWindow = null
 let settings
 let pausedForSuspend = false
+let pausedForActiveApp = false
 
 app.setAppUserModelId('net.hovancik.stretchly')
 
@@ -46,6 +48,7 @@ app.on('ready', startProcessWin)
 app.on('ready', loadSettings)
 app.on('ready', createTrayIcon)
 app.on('ready', startPowerMonitoring)
+app.on('ready', startActiveAppMonitoring)
 // app.on('ready', () => { breakPlanner.skipToMicrobreak() })
 // app.on('ready', () => { breakPlanner.skipToBreak() })
 app.on('window-all-closed', () => {
@@ -104,12 +107,24 @@ function startPowerMonitoring () {
 	})
 }
 
+function startActiveAppMonitoring() {
+	const osascriptCmd = `osascript -e 'tell application "System Events"' -e 'set frontApp to name of first application process whose frontmost is true' -e 'end tell'`
+	const appsToPauseTimer = "zoom.us Facetime".split(' ');
+	const activeAppMonitoringInterval = setInterval(() => {
+		exec(osascriptCmd, (err, stdout, stderr) => {
+			// console.log(stdout.trim());
+			pausedForActiveApp = (appsToPauseTimer.indexOf(stdout.trim()) !== -1)
+		})
+	}, 5000);
+}
+
 function numberOfDisplays () {
 	const electron = require('electron')
 	return electron.screen.getAllDisplays().length
 }
 
 function closeWindows (windowArray) {
+	if (!windowArray) return;
 	for (let i = windowArray.length - 1; i >= 0; i--) {
 		windowArray[i].close()
 	}
@@ -276,6 +291,12 @@ function startMicrobreak () {
 		console.log('microbreak already running')
 		return
 	}
+
+	if (pausedForActiveApp) {
+		console.log('a whitelisted app is in focus, skipping')
+		finishMicrobreak()
+		return
+	}
 	
 	const startTime = Date.now()
 	const breakDuration = settings.get('microbreakDuration')
@@ -363,6 +384,12 @@ function startBreak () {
 	// don't start another break if break running
 	if (breakWins) {
 		console.log('break already running')
+		return
+	}
+
+	if (pausedForActiveApp) {
+		console.log('a whitelisted app is in focus, skipping')
+		finishBreak()
 		return
 	}
 	
