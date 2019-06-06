@@ -109,7 +109,7 @@ function startPowerMonitoring () {
 
 function startActiveAppMonitoring() {
 	const osascriptCmd = `osascript -e 'tell application "System Events"' -e 'set frontApp to name of first application process whose frontmost is true' -e 'end tell'`
-	const appsToPauseTimer = "zoom.us Facetime".split(' ');
+	const appsToPauseTimer = "zoom.us Facetime VLC".split(' ');
 	const activeAppMonitoringInterval = setInterval(() => {
 		exec(osascriptCmd, (err, stdout, stderr) => {
 			// console.log(stdout.trim());

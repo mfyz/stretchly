@@ -36,8 +36,8 @@ microbreakIntervalPlus.addEventListener('click', function (e) {
 })
 
 microbreakIntervalMinus.addEventListener('click', function (e) {
-  if (microbreakInterval.innerHTML !== '1') {
-    ipcRenderer.send('save-setting', 'microbreakInterval', (parseInt(microbreakInterval.innerHTML, 10) - 1) * 1000 * 60)
+  if (microbreakInterval.innerHTML !== '5') {
+    ipcRenderer.send('save-setting', 'microbreakInterval', (parseInt(microbreakInterval.innerHTML, 10) - 5) * 1000 * 60)
   }
 })
 
